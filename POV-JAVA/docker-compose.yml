@@ -49,7 +49,7 @@ services:
   # event Service
   event-service:
     build:
-      context: ./POV-JAVA/Article
+      context: ./POV-JAVA/microservice-event-spring
     ports:
       - "8089:8089"
     depends_on:
