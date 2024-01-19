@@ -30,12 +30,14 @@ public class ReservationController {
 
     @GetMapping
     public List<Reservation> findAll() {
+        System.out.println("hhi");
         return reservationService.getAllReservations();
     }
 
 
     @PostMapping
     public ResponseEntity<Reservation> createReservation(@RequestBody Reservation reservation) {
+
         try {
             Reservation createdReservation = reservationService.createReservation(reservation);
             for(LigneReservation l :reservation.getLigneReservation())
