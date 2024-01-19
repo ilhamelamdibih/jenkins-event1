@@ -30,7 +30,7 @@ public class ReservationController {
 
     @GetMapping
     public List<Reservation> findAll() {
-        System.out.println("hhi");
+        System.out.println("hello");
         return reservationService.getAllReservations();
     }
 
