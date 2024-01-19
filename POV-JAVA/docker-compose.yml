@@ -29,7 +29,7 @@ services:
   # Utilisateur Service
   reservation-service:
     build:
-      context: ./POV-JAVA/microserice-reservation-spring
+      context: ./microserice-reservation-spring
     ports:
       - "8088:8088"
     depends_on:
@@ -49,7 +49,7 @@ services:
   # event Service
   event-service:
     build:
-      context: ./POV-JAVA/microservice-event-spring
+      context: ./microservice-event-spring
     ports:
       - "8089:8089"
     depends_on:
