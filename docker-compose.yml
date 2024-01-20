@@ -90,13 +90,6 @@ services:
     networks:
       - n3
 
-  app3:
-    build:
-      context: ./microservice-payment-authentification-django
-      dockerfile: Dockerfile.app
-    ports:
-      - "8003:80"
-
 networks:
   n3:
     external: true
