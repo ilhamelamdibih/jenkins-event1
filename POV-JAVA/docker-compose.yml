@@ -7,7 +7,6 @@ services:
   mysql-reservation:
     image: mysql:latest
     environment:
-      MYSQL_ROOT_PASSWORD: ""
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_DATABASE: service_reservation
 
@@ -20,7 +19,6 @@ services:
   mysql-event:
     image: mysql:latest
     environment:
-      MYSQL_ROOT_PASSWORD: ""
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_DATABASE: service_event
 
@@ -32,7 +30,7 @@ services:
   # Reservation Service
   reservation-service:
     build:
-      context: ./POV-JAVA/microserice-reservation-spring
+      context: ./microserice-reservation-spring
     ports:
       - "6662:6662"
     depends_on:
@@ -52,7 +50,7 @@ services:
   # Event Service
   event-service:
     build:
-      context: ./POV-JAVA/microservice-event-spring
+      context: ./microservice-event-spring
     ports:
       - "6661:6661"
     depends_on:
