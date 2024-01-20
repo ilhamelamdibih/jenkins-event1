@@ -3,6 +3,7 @@ version: '3'
 services:
 
 
+
   # MySQL Reservation
   mysql-reservation:
     image: mysql:latest
@@ -88,6 +89,13 @@ services:
       - "8083:80"
     networks:
       - n3
+
+  app3:
+    build:
+      context: ./microservice-payment-authentification-django
+      dockerfile: Dockerfile.app
+    ports:
+      - "8003:80"
 
 networks:
   n3:
