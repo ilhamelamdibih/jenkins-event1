@@ -1,52 +1,96 @@
 version: '3'
 
-networks:
-  my_network:
-    driver: bridge
-
 services:
 
-  mysql-database:
+
+  # MySQL Reservation
+  mysql-reservation:
     image: mysql:latest
     environment:
       MYSQL_ROOT_PASSWORD: ""
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_DATABASE: service_reservation
+
     ports:
       - "3306:3306"
     networks:
-      - my_network
+      - n3
 
-  event-service:
-    image: openjdk:17
-    build:
-      context: ./microservice-event-spring
-      dockerfile: Dockerfile
-    ports:
-      - "6661:6661"
-    command: ["java", "-jar", "/app/Event-0.0.1-SNAPSHOT.jar"]
-    volumes:
-      - ./microservice-event-spring/target:/app
+  # MySQL Event
+  mysql-event:
+    image: mysql:latest
     environment:
-      - "SPRING_DATASOURCE_URL=jdbc:mysql://mysql-database:3306/service_event?createDatabaseIfNotExist=true&serverTimezone=UTC"
-    depends_on:
-      - mysql-database
-    networks:
-      - my_network
+      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: service_event
 
+    ports:
+      - "3307:3306"
+    networks:
+      - n3
+
+  # Reservation Service
   reservation-service:
-    image: openjdk:17
+    build:
+      context: ./POV-JAVA/microserice-reservation-spring
     ports:
       - "6662:6662"
-    build:
-      context: ./microserice-reservation-spring
-      dockerfile: Dockerfile
-    command: ["java", "-jar", "/app/Reservation-0.0.1-SNAPSHOT.jar"]
-    volumes:
-      - ./microserice-reservation-spring/target:/app
-    environment:
-      - "SPRING_DATASOURCE_URL=jdbc:mysql://mysql-database:3306/service_event?createDatabaseIfNotExist=true&serverTimezone=UTC"
     depends_on:
-      - mysql-database
+      - mysql-reservation
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-reservation:3306/service_reservation?createDatabaseIfNotExist=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    healthcheck:
+      test: "/usr/bin/mysql --user=root --password=root --execute \"SHOW DATABASES;\""
+      interval: 5s
+      timeout: 2s
+      retries: 100
     networks:
-      - my_network
+      - n3
+
+  # Event Service
+  event-service:
+    build:
+      context: ./POV-JAVA/microservice-event-spring
+    ports:
+      - "6661:6661"
+    depends_on:
+      - mysql-event
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-event:3306/service_event?createDatabaseIfNotExist=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    healthcheck:
+      test: "/usr/bin/mysql --user=root --password=root --execute \"SHOW DATABASES;\""
+      interval: 5s
+      timeout: 2s
+      retries: 100
+    networks:
+      - n3
+
+  phpmyadmin-reservation:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: mysql-reservation
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "8082:80"
+    networks:
+      - n3
+
+  phpmyadmin-event:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: mysql-event
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "8083:80"
+    networks:
+      - n3
+
+networks:
+  n3:
+    external: true
