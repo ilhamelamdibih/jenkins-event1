@@ -31,6 +31,7 @@ public class ReservationController {
     @GetMapping
     public List<Reservation> findAll() {
         System.out.println("hello");
+        System.out.println("hello");
         return reservationService.getAllReservations();
     }
 
